@@ -103,6 +103,10 @@ Response: {"overall_total": 1845000.00, "by_company": [...]}
 
 
 ## 3. Complex Logic Snippet: Order State Reconciliation
-The following abstracted PHP method demonstrates how the system securely reconciles purchase order states. It cross-references total payments against total ordered and received stock quantities using prepared statements to prevent injection and enforce strict business logic before closing an order.
+The system securely reconciles purchase order states by cross-referencing total payments against total received stock. This ensures data integrity server-side, preventing partial closures.
 
-(See src/OrderReconciliationService.php for the full abstracted logic).
+```php
+// Core reconciliation logic handling state transitions
+$status = ($paidAmount >= $grandTotal && $totalReceived > 0) ? 'closed' : 'open';
+$update = $db->prepare("UPDATE purchase_order_list SET close_status = ? WHERE id = ?");
+```
